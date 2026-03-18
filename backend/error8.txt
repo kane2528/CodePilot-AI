@@ -1,0 +1,75 @@
+﻿[dotenv@17.3.1] injecting env (13) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ΓÜí∩╕Å secrets for agents: https://dotenvx.com/as2
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ≡ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+=== Loading route modules ===
+
+Γ£ô authRoutes router created
+Γ£ô profileRoutes router created
+Γ£ô Mounted profile routes
+Γ£ô toolRoutes router created
+Γ£ô Mounted tool routes
+node : C:\Users\Kanwarasis\De
+sktop\KANWAR\THAPAR\CodePilot
+ AI\CodePilot-AI\backend\node
+_modules\router\lib\route.js:
+228
+At line:1 char:1
++ node server.js 2>&1 | 
+Out-File -Encoding UTF8 
+error8.txt
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (C:\User  
+  s\Kanwar...ib\route.js:2   
+ 28:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+        throw new 
+TypeError('argument handler 
+must be a function')
+        ^
+
+TypeError: argument handler 
+must be a function
+    at Route.<computed> [as 
+delete] (C:\Users\Kanwarasis\
+Desktop\KANWAR\THAPAR\CodePil
+ot AI\CodePilot-AI\backend\no
+de_modules\router\lib\route.j
+s:228:15)
+    at Router.<computed> [as 
+delete] (C:\Users\Kanwarasis\
+Desktop\KANWAR\THAPAR\CodePil
+ot AI\CodePilot-AI\backend\no
+de_modules\router\index.js:44
+8:19)
+    at Object.<anonymous> (C:
+\Users\Kanwarasis\Desktop\KAN
+WAR\THAPAR\CodePilot AI\CodeP
+ilot-AI\backend\routes\resume
+Routes.js:18:14)
+    at Module._compile (node:
+internal/modules/cjs/loader:1
+812:14)
+    at Object..js (node:inter
+nal/modules/cjs/loader:1943:1
+0)
+    at Module.load (node:inte
+rnal/modules/cjs/loader:1533:
+32)
+    at Module._load (node:int
+ernal/modules/cjs/loader:1335
+:12)
+    at wrapModuleLoad (node:i
+nternal/modules/cjs/loader:25
+5:19)
+    at Module.require (node:i
+nternal/modules/cjs/loader:15
+56:12)
+    at require (node:internal
+/modules/helpers:152:16)
+
+Node.js v24.14.0

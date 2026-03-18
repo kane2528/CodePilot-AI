@@ -1,0 +1,13 @@
+node_modules
+.env
+.git
+.gitignore
+*.log
+logs/
+error.log
+error.txt
+error8.txt
+npm-debug.log*
+.DS_Store
+uploads/
+coverage/

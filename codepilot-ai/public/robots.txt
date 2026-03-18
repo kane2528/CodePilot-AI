@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /signin
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /oauth-success
+Disallow: /api/
+
+# Host
+Host: https://codepilotai.com
+
+# Sitemaps
+Sitemap: https://codepilotai.com/sitemap.xml
