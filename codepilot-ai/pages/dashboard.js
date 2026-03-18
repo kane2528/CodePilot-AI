@@ -4,46 +4,101 @@ import Link from "next/link";
 import API from "../utils/api";
 
 export default function Dashboard() {
+    const [user, setUser] = useState(null);
     const [completionPercentage, setCompletionPercentage] = useState(0);
     const [history, setHistory] = useState([]);
     const [resumeCount, setResumeCount] = useState(0);
-    useEffect(() => {
-        const fetchProfileData = async () => {
-            try {
-                const res = await API.get('/profile/me');
-                const data = res.data.data;
+    const [paymentLoading, setPaymentLoading] = useState(false);
 
-                let filledCount = 0;
-                const totalFields = 20;
+    const fetchProfileData = async () => {
+        try {
+            const res = await API.get('/profile/me');
+            const data = res.data.data;
+            setUser(data);
 
-                if (data.firstName) filledCount++;
-                if (data.lastName) filledCount++;
-                if (data.role) filledCount++;
-                if (data.university) filledCount++;
-                if (data.degree) filledCount++;
-                if (data.cgpa) filledCount++;
-                if (data.graduationYear) filledCount++;
-                if (data.company) filledCount++;
-                if (data.position) filledCount++;
-                if (data.experienceYears) filledCount++;
-                if (data.github) filledCount++;
-                if (data.linkedin) filledCount++;
-                if (data.portfolio) filledCount++;
-                if (data.skills && data.skills.length > 0) filledCount++;
-                if (data.languages && data.languages.length > 0) filledCount++;
-                if (data.profile?.gender) filledCount++;
-                if (data.profile?.dob) filledCount++;
-                if (data.profile?.phone) filledCount++;
-                if (data.profile?.address) filledCount++;
-                if (data.profile?.bio) filledCount++;
+            let filledCount = 0;
+            const totalFields = 20;
 
-                const percentage = Math.round((filledCount / totalFields) * 100);
-                setCompletionPercentage(percentage);
-            } catch (err) {
-                console.error("Failed to fetch profile for completion stats", err);
+            if (data.firstName) filledCount++;
+            if (data.lastName) filledCount++;
+            if (data.role) filledCount++;
+            if (data.university) filledCount++;
+            if (data.degree) filledCount++;
+            if (data.cgpa) filledCount++;
+            if (data.graduationYear) filledCount++;
+            if (data.company) filledCount++;
+            if (data.position) filledCount++;
+            if (data.experienceYears) filledCount++;
+            if (data.github) filledCount++;
+            if (data.linkedin) filledCount++;
+            if (data.portfolio) filledCount++;
+            if (data.skills && data.skills.length > 0) filledCount++;
+            if (data.languages && data.languages.length > 0) filledCount++;
+            if (data.profile?.gender) filledCount++;
+            if (data.profile?.dob) filledCount++;
+            if (data.profile?.phone) filledCount++;
+            if (data.profile?.address) filledCount++;
+            if (data.profile?.bio) filledCount++;
+
+            const percentage = Math.round((filledCount / totalFields) * 100);
+            setCompletionPercentage(percentage);
+        } catch (err) {
+            console.error("Failed to fetch profile for completion stats", err);
+        }
+    };
+
+    const handlePayment = async () => {
+        setPaymentLoading(true);
+        try {
+            const res = await API.post('/payment/create-order');
+            const { order_id, key } = res.data;
+
+            if (!window.Razorpay) {
+              alert("Razorpay script not loaded. Please refresh.");
+              return;
             }
-        };
 
+            const options = {
+                key,
+                amount: 1500,
+                currency: "INR",
+                name: "CodePilot AI Pro",
+                description: "Unlimited Daily Access",
+                order_id,
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await API.post('/payment/verify', {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        });
+                        if (verifyRes.data.success) {
+                            alert("Payment Successful! You are now Pro for 24 hours.");
+                            fetchProfileData();
+                        }
+                    } catch (err) {
+                        alert("Verification failed: " + err.response?.data?.message);
+                    }
+                },
+                prefill: {
+                    name: `${user?.firstName} ${user?.lastName}`,
+                    email: user?.email,
+                },
+                theme: {
+                    color: "#3b82f6",
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (err) {
+            alert("Error creating order: " + err.response?.data?.message);
+        } finally {
+            setPaymentLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchProfileData();
     }, []);
     
@@ -70,6 +125,11 @@ export default function Dashboard() {
         };
         fetchResumeCount();
     }, []);
+
+    const usageLimit = 10;
+    const currentUsage = user?.usageCount || 0;
+    const isPro = user?.isPro || false;
+
     return (
         <Layout>
 
@@ -77,33 +137,74 @@ export default function Dashboard() {
 
                 {/* WELCOME SECTION */}
 
-                <div>
-                    <h1 className="text-4xl font-bold">
-                        Welcome back 👋
-                    </h1>
-                    <p className="text-gray-400 mt-2">
-                        Ready to build something with AI today?
-                    </p>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
+                    <div>
+                        <h1 className="text-4xl font-bold">
+                            Welcome back 👋
+                        </h1>
+                        <p className="text-gray-400 mt-2">
+                            Ready to build something with AI today?
+                        </p>
+                    </div>
+                    
+                    {!isPro && (
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-3 min-w-[250px]">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">Daily Usage</span>
+                                <span className={currentUsage >= usageLimit ? "text-red-400 font-bold" : "text-blue-400 font-bold"}>
+                                    {currentUsage}/{usageLimit}
+                                </span>
+                            </div>
+                            <div className="w-full bg-white/10 rounded-full h-2">
+                                <div 
+                                    className={`h-2 rounded-full transition-all duration-500 ${currentUsage >= usageLimit ? 'bg-red-500' : 'bg-blue-500'}`}
+                                    style={{ width: `${Math.min((currentUsage / usageLimit) * 100, 100)}%` }}
+                                ></div>
+                            </div>
+                            {currentUsage >= usageLimit ? (
+                                <button 
+                                    onClick={handlePayment}
+                                    disabled={paymentLoading}
+                                    className="text-white text-xs font-semibold py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 transition w-full"
+                                >
+                                    {paymentLoading ? "Processing..." : "Unlock Unlimited for ₹15"}
+                                </button>
+                            ) : (
+                                <p className="text-[10px] text-gray-500 text-center italic">
+                                    Limit refreshes daily. Get Pro for unlimited.
+                                </p>
+                            )}
+                        </div>
+                    )}
+                    {isPro && (
+                        <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl p-4 flex items-center gap-3">
+                            <span className="text-2xl">💎</span>
+                            <div>
+                                <p className="text-sm font-bold text-blue-400">Pro Account Active</p>
+                                <p className="text-xs text-gray-400">Unlimited AI Access enabled</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* STATS */}
 
                 <div className="grid md:grid-cols-3 gap-6">
 
-                    <StatCard title="AI Requests" value={history.length} icon="⚡" color="blue" />
+                    <StatCard title="Total AI Requests" value={history.length} icon="⚡" color="blue" />
 
                     <StatCard
-                        title="Tools Used"
+                        title="Tools Covered"
                         value={[...new Set(history.map(h => h.toolName))].length}
                         icon="🧰"
                         color="purple"
                     />
 
                     <StatCard
-                        title="Resumes Generated"
-                        value={history.filter(h => h.toolName === "resume-builder").length}
-                        icon="📄"
-                        color="emerald"
+                        title="Pro Status"
+                        value={isPro ? "Active" : "Free"}
+                        icon="🛡️"
+                        color={isPro ? "emerald" : "blue"}
                     />
 
                 </div>

@@ -43,6 +43,7 @@ export default function Document() {
       </Head>
       <body className="antialiased">
         <Main />
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <NextScript />
       </body>
     </Html>

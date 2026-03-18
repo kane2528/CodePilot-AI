@@ -10,35 +10,92 @@ const [code, setCode] = useState("");
 const [language, setLanguage] = useState("javascript");
 const [loading, setLoading] = useState(false);
 const [result, setResult] = useState("");
+const [user, setUser] = useState(null);
+const [paymentLoading, setPaymentLoading] = useState(false);
+
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await API.get('/profile/me');
+      setUser(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  fetchUser();
+}, []);
+
+const handlePayment = async () => {
+  setPaymentLoading(true);
+  try {
+    const res = await API.post('/payment/create-order');
+    const { order_id, key } = res.data;
+
+    const options = {
+      key,
+      amount: 1500,
+      currency: "INR",
+      name: "CodePilot AI Pro",
+      description: "Unlock Unlimited Access",
+      order_id,
+      handler: async function (response) {
+        try {
+          const verifyRes = await API.post('/payment/verify', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          });
+          if (verifyRes.data.success) {
+            alert("Payment Successful! You now have unlimited access for 24 hours.");
+            window.location.reload();
+          }
+        } catch (err) {
+          alert("Verification failed: " + err.response?.data?.message);
+        }
+      },
+      prefill: {
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.email,
+      },
+      theme: {
+        color: "#3b82f6",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (err) {
+    alert("Error creating order: " + err.response?.data?.message);
+  } finally {
+    setPaymentLoading(false);
+  }
+};
 
 const handleGenerate = async (e) => {
-e.preventDefault();
+  e.preventDefault();
+  if (!code.trim()) return;
 
+  setLoading(true);
+  setResult("");
 
-if (!code.trim()) return;
+  try {
+    const res = await API.post("/tools/code-explainer", {
+      prompt: `Explain this ${language} code:\n${code}`,
+    });
 
-setLoading(true);
-setResult("");
-
-try {
-  const res = await API.post("/tools/code-explainer", {
-    prompt: `Explain this ${language} code:\n${code}`,
-  });
-
-  const data = res.data;
-
-  if (data.success) {
-    setResult(data.data.result);
-  } else {
-    setResult("\u274c " + data.message);
+    const data = res.data;
+    if (data.success) {
+      setResult(data.data.result);
+    }
+  } catch (err) {
+    if (err.response?.status === 403) {
+      setResult("LIMIT_REACHED");
+    } else {
+      setResult("\u274c Something went wrong");
+    }
+  } finally {
+    setLoading(false);
   }
-} catch (err) {
-  setResult("\u274c Something went wrong");
-} finally {
-  setLoading(false);
-}
-
-
 };
 
 // auto scroll to result
@@ -108,25 +165,40 @@ behavior: "smooth",
           </form>
 
           {/* Result */}
-          {result && (
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8 shadow-2xl">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold">Explanation</h2>
-                <button
-                  onClick={() => navigator.clipboard.writeText(result)}
-                  className="text-sm text-purple-400 hover:underline"
-                >
-                  Copy
-                </button>
-              </div>
+          {result === "LIMIT_REACHED" ? (
+             <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-xl border border-blue-500/30 rounded-xl p-8 shadow-2xl flex flex-col items-center text-center gap-6">
+               <div className="text-5xl">⚡</div>
+               <h2 className="text-3xl font-bold">Daily Limit Reached</h2>
+               <p className="text-gray-300 max-w-md">
+                 Free users get 10 AI requests per day. Pay just ₹15 to unlock unlimited access for the next 24 hours!
+               </p>
+               <button 
+                 onClick={handlePayment}
+                 disabled={paymentLoading}
+                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold transition transform hover:scale-105 disabled:opacity-50"
+               >
+                 {paymentLoading ? "🔄 Processing..." : "Unlock Unlimited for ₹15"}
+               </button>
+             </div>
+           ) : result && (
+             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8 shadow-2xl">
+               <div className="flex justify-between items-center mb-4">
+                 <h2 className="text-2xl font-semibold">Explanation</h2>
+                 <button
+                   onClick={() => navigator.clipboard.writeText(result)}
+                   className="text-sm text-purple-400 hover:underline"
+                 >
+                   Copy
+                 </button>
+               </div>
 
-              <div className="prose prose-invert max-w-none">
-                <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
-                  {result}
-                </ReactMarkdown>
-              </div>
-            </div>
-          )}
+               <div className="prose prose-invert max-w-none">
+                 <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                   {result}
+                 </ReactMarkdown>
+               </div>
+             </div>
+           )}
         </div>
       </Layout>
     </>

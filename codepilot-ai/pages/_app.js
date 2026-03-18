@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import "highlight.js/styles/github-dark.css";
 import Hero from "@/components/Hero";
-const protectedRoutes = ["/dashboard", "/tools", "/resume-builder", "/profile"];
+const protectedRoutes = ["/dashboard", "/tools", "/resume-builder", "/profile","/pricing"];
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
