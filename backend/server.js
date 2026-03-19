@@ -28,12 +28,17 @@ app.use(passport.session());
 // Serve static files
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
-
+app.set("trust proxy", 1);
 // Enable CORS
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 
@@ -73,6 +78,10 @@ console.log('✓ Mounted tool routes');
 const resumeRoutes = require('./routes/resumeRoutes');
 app.use('/api/resume', resumeRoutes);
 console.log('✓ Mounted resume routes');
+
+const paymentRoutes = require('./routes/paymentRoutes');
+app.use('/api/payment', paymentRoutes);
+console.log('✓ Mounted payment routes');
 
 console.log('\n=== Route loading complete ===\n');
 
