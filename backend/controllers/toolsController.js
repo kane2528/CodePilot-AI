@@ -25,6 +25,10 @@ const aiResponse = await AIService.generateResponse(prompt, toolName, level, lan
       outputResult: aiResponse,
     });
 
+    // Increment usage
+    req.user.usageCount += 1;
+    await req.user.save();
+
     res.json({
       success: true,
       data: {

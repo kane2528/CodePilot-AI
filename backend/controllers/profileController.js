@@ -1,11 +1,16 @@
 const User = require('../models/User');
+const { checkUserStatus } = require('../utils/userUtils');
 
 // @desc    Get current user profile
 // @route   GET /api/profile/me
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    let user = await User.findById(req.user._id);
     
+    if (user) {
+      user = await checkUserStatus(user);
+    }
+
     res.json({
       success: true,
       data: user,

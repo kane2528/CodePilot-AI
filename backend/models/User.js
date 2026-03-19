@@ -59,6 +59,20 @@ const userSchema = new mongoose.Schema({
   portfolio: String,
   resetPasswordToken: String,
   resetPasswordExpire: Date,
+  usageCount: { 
+    type: Number, 
+    default: 0 
+  },
+  lastUsedDate: { 
+    type: String 
+  },
+  isPro: { 
+    type: Boolean, 
+    default: false 
+  },
+  proExpiry: { 
+    type: Date 
+  },
   createdAt: {
     type: Date,
     default: Date.now,
