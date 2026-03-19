@@ -36,11 +36,9 @@
 ].filter(Boolean);
 
 app.use(cors({
-  origin: true, // allow all origins dynamically
+  origin: true,
   credentials: true,
 }));
-
-app.options("*", cors());
 
   // Health check route
   app.get('/health', (req, res) => {
