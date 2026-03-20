@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<sitemap><loc>https://code-pilot-ai-swart.vercel.app/sitemap-0.xml</loc></sitemap>
-<sitemap><loc>https://code-pilot-ai-swart.vercel.app/sitemap.xml</loc></sitemap>
-<sitemap><loc>
-  <loc>https://code-pilot-ai-swart.vercel.app/blog/best-ai-tools-for-developers-2025</loc>
-</loc></sitemap>
-<sitemap><loc>
-  <loc>https://code-pilot-ai-swart.vercel.app/blog/how-to-explain-code-using-ai</loc>
-</loc></sitemap>
-</sitemapindex>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/</loc>
+  </url>
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/pricing</loc>
+  </url>
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/blog</loc>
+  </url>
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/faq</loc>
+  </url>
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/blog/how-to-explain-code-using-ai</loc>
+  </url>
+
+  <url>
+    <loc>https://code-pilot-ai-swart.vercel.app/blog/best-ai-tools-for-developers-2025</loc>
+  </url>
+
+</urlset>
