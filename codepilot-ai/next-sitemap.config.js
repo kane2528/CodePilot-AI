@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: process.env.SITE_URL || "https://codepilotai.com",
+  siteUrl: process.env.SITE_URL || "https://code-pilot-ai-swart.vercel.app/",
   generateRobotsTxt: true,
   changefreq: "weekly",
   priority: 0.7,
@@ -56,7 +56,7 @@ const config = {
         ],
       },
     ],
-    additionalSitemaps: [`${process.env.SITE_URL || "https://codepilotai.com"}/sitemap.xml`],
+    additionalSitemaps: [`${process.env.SITE_URL || "https://code-pilot-ai-swart.vercel.app/"}/sitemap.xml`],
   },
 };
 
