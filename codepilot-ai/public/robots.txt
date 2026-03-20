@@ -11,7 +11,7 @@ Disallow: /oauth-success
 Disallow: /api/
 
 # Host
-Host: https://codepilotai.com
+Host: https://code-pilot-ai-swart.vercel.app
 
 # Sitemaps
-Sitemap: https://codepilotai.com/sitemap.xml
+Sitemap: https://code-pilot-ai-swart.vercel.app/sitemap.xml
