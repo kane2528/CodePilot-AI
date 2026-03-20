@@ -23,7 +23,7 @@ export default function Document() {
         <meta property="og:image" content={`${SITE_URL}/og-default.png`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-
+        <meta name="google-site-verification" content="6wk48hwVGYlx3ceTT3uYACsegZZaryO8eEkcMIPzRs0" />
         {/* Twitter Defaults */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@codepilotai" />
